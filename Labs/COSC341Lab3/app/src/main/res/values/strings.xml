@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">COSC341Lab3</string>
+    <string name="load_quiz">LOAD QUIZ</string>
+    <string name="no_of_questions">No of Questions</string>
+    <string name="category">Category</string>
+    <string name="general_knowledge_quiz">General Knowledge Quiz</string>
+    <string-array name="number_of_questions">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="category">
+        <item>Canadian Capital</item>
+        <item>Canadian Mountains</item>
+        <item>About Canada</item>
+    </string-array>
+</resources>

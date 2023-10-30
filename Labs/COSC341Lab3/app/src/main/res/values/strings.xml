@@ -12,7 +12,112 @@
     </string-array>
     <string-array name="category">
         <item>Canadian Capital</item>
-        <item>Canadian Mountains</item>
         <item>About Canada</item>
+        <item>Canadian Mountains</item>
+    </string-array>
+
+    <string-array name="canadian_capital_questions">
+        <item>Please select the correct capital name from a list of options for each province and territory in Canada.</item>
+    </string-array>
+    <string-array name="canadian_capital_options_q1">
+        <item>Ottawa</item>
+        <item>Hamilton</item>
+        <item>Toronto</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="canadian_capital_options_q2">
+        <item>St. John\'s</item>
+        <item>Charlottetown</item>
+        <item>Winnipeg</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="canadian_capital_options_q3">
+        <item>St. John\'s</item>
+        <item>Waterloo</item>
+        <item>Regina</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="canadian_capital_options_q4">
+        <item>Whitehorse</item>
+        <item>Inuvik</item>
+        <item>Yellowknife</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="canadian_capital_correct_answers">
+        <item>Toronto</item>
+        <item>Charlottetown</item>
+        <item>St. John\'s</item>
+        <item>Yellowknife</item>
+    </string-array>
+
+    <string-array name="about_canada_questions">
+        <string>Who is the Head of Government of Canada?</string>
+        <string>Which of the following is NOT a provincial/territorial responsibility?</string>
+        <string>How many Canadians died in World War II?</string>
+        <string>What province in Canada is known for its Celtic and Gaelic traditions?</string>
+    </string-array>
+    <string-array name="about_canada_options_q1">
+        <item>The Prime Minister</item>
+        <item>The Governor General</item>
+        <item>The Lt. Governor</item>
+        <item>The Sovereign</item>
+    </string-array>
+    <string-array name="about_canada_options_q2">
+        <item>Education</item>
+        <item>Property and civil rights</item>
+        <item>Health</item>
+        <item>Foreign policy</item>
+    </string-array>
+    <string-array name="about_canada_options_q3">
+        <item>6,000</item>
+        <item>45,000</item>
+        <item>60,000</item>
+        <item>110,000</item>
+    </string-array>
+    <string-array name="about_canada_options_q4">
+        <item>Nova Scotia</item>
+        <item>Newfoundland and Labrador</item>
+        <item>Prince Edward Island</item>
+        <item>New Brunswick</item>
+    </string-array>
+    <string-array name="about_canada_correct_answers">
+        <item>The Prime Minister</item>
+        <item>Foreign policy</item>
+        <item>45,000</item>
+        <item>Nova Scotia</item>
+    </string-array>
+
+    <string-array name="canadian_mountains_questions">
+        <item>Please select the correct Mountain name from a list of mountain names in Canada.</item>
+    </string-array>
+    <string-array name="canadian_mountains_options_q1">
+        <item>Rocky Mountains</item>
+        <item>Appalachian Mountains</item>
+        <item>Andes Mountains</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="canadian_mountains_options_q2">
+        <item>Himalayas</item>
+        <item>Alps</item>
+        <item>Mount Robson</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="canadian_mountains_options_q3">
+        <item>Andes Mountains</item>
+        <item>Sierra Nevada</item>
+        <item>Mount Temple</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="canadian_mountains_options_q4">
+        <item>Alps</item>
+        <item>Mount Columbia</item>
+        <item>Andes Mountains</item>
+        <item>None</item>
+    </string-array>
+    <string-array name="canadian_mountains_correct_answers">
+        <item>Rocky Mountains</item>
+        <item>Mount Robson</item>
+        <item>Mount Temple</item>
+        <item>Mount Columbia</item>
     </string-array>
 </resources>

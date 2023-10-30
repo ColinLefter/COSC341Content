@@ -165,7 +165,6 @@ public class QuizActivity extends AppCompatActivity {
         ConstraintLayout quizContainer = findViewById(R.id.quizContainer);
         quizContainer.addView(questionView);
     }
-
 }
 
 class Question {

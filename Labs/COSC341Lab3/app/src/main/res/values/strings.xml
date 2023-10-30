@@ -4,6 +4,7 @@
     <string name="no_of_questions">No of Questions</string>
     <string name="category">Category</string>
     <string name="general_knowledge_quiz">General Knowledge Quiz</string>
+    <string name="next">NEXT</string>
     <string-array name="number_of_questions">
         <item>1</item>
         <item>2</item>
@@ -17,6 +18,9 @@
     </string-array>
 
     <string-array name="canadian_capital_questions">
+        <item>Please select the correct capital name from a list of options for each province and territory in Canada.</item>
+        <item>Please select the correct capital name from a list of options for each province and territory in Canada.</item>
+        <item>Please select the correct capital name from a list of options for each province and territory in Canada.</item>
         <item>Please select the correct capital name from a list of options for each province and territory in Canada.</item>
     </string-array>
     <string-array name="canadian_capital_options_q1">
@@ -51,10 +55,10 @@
     </string-array>
 
     <string-array name="about_canada_questions">
-        <string>Who is the Head of Government of Canada?</string>
-        <string>Which of the following is NOT a provincial/territorial responsibility?</string>
-        <string>How many Canadians died in World War II?</string>
-        <string>What province in Canada is known for its Celtic and Gaelic traditions?</string>
+        <item>Who is the Head of Government of Canada?</item>
+        <item>Which of the following is NOT a provincial/territorial responsibility?</item>
+        <item>How many Canadians died in World War II?</item>
+        <item>What province in Canada is known for its Celtic and Gaelic traditions?</item>
     </string-array>
     <string-array name="about_canada_options_q1">
         <item>The Prime Minister</item>
@@ -88,6 +92,9 @@
     </string-array>
 
     <string-array name="canadian_mountains_questions">
+        <item>Please select the correct Mountain name from a list of mountain names in Canada.</item>
+        <item>Please select the correct Mountain name from a list of mountain names in Canada.</item>
+        <item>Please select the correct Mountain name from a list of mountain names in Canada.</item>
         <item>Please select the correct Mountain name from a list of mountain names in Canada.</item>
     </string-array>
     <string-array name="canadian_mountains_options_q1">

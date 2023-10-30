@@ -1,29 +1,33 @@
 package com.example.cosc341lab3;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class QuizActivity extends AppCompatActivity {
+    private int currentQuestionIdx = 0;
+    private int numOfQuestions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
-        String numberOfQuestions = getIntent().getStringExtra("numberOfQuestions");
+        numOfQuestions = Integer.parseInt(getIntent().getStringExtra("numberOfQuestions"));
         String category = getIntent().getStringExtra("category");
 
-        loadQuestions(category, Integer.parseInt(numberOfQuestions));
+        loadQuestions(category);
     }
     private String[] getCategoryQuestions(String category) {
         String[] categories = getResources().getStringArray(R.array.category);
@@ -88,7 +92,7 @@ public class QuizActivity extends AppCompatActivity {
         return correctAnswers;
     }
 
-    private void loadQuestions(String category, int numOfQuestions) {
+    private void loadQuestions(String category) {
         String[] questionsToAsk = getCategoryQuestions(category);
         String[][] categoryOptions = getQuestionOptions(category);
         String[] correctAnswers = getCorrectAnswersForQuestions(category);
@@ -97,54 +101,71 @@ public class QuizActivity extends AppCompatActivity {
         // the solution to this is to use a layout inflater to create views for each question
         // where the base template is the question_layout.xml template
 
-        LayoutInflater inflater = LayoutInflater.from(this);
+        if (currentQuestionIdx <= numOfQuestions) {
+            loadQuestionView(questionsToAsk, categoryOptions, correctAnswers, category);
+        } //else { // Now we need to show the results
 
-        for (int i = 0; i < numOfQuestions; i++) { // only show numOfQuestions many views
-            // Inflate the question layout
-            View questionView = inflater.inflate(R.layout.question_layout, null);
-
-            // Find and set the image for the question (if applicable)
-            ImageView questionImage = questionView.findViewById(R.id.imageView);
-            switch (category) {
-                case "About Canada":
-                    // Set the image resource based on the question number
-                    @SuppressLint("DiscouragedApi") int imageResId = getResources().getIdentifier(
-                            "about_canada" + (i + 1),
-                            "drawable", getPackageName()
-                    );
-                    questionImage.setImageResource(imageResId);
-                    break;
-                case "Canadian Capital":
-                    @SuppressLint("DiscouragedApi") int imageResId2 = getResources().getIdentifier(
-                            "capital" + (i + 1),
-                            "drawable",
-                            getPackageName());
-                    questionImage.setImageResource(imageResId2);
-                    break;
-                case "Canadian Mountains":
-                    @SuppressLint("DiscouragedApi") int imageResId3 = getResources().getIdentifier(
-                            "mountain" + (i + 1),
-                            "drawable",
-                            getPackageName());
-                    questionImage.setImageResource(imageResId3);
-                    break;
-            }
-
-            // Find the RadioGroup and populate the options
-            RadioGroup optionsGroup = questionView.findViewById(R.id.radioGroupOptions);
-
-            for (String option : categoryOptions[i]) {
-                RadioButton radioButton = new RadioButton(this);
-                radioButton.setText(option);
-                optionsGroup.addView(radioButton);
-            }
-
-            // Add the question view to your main layout
-            // Assuming you have a LinearLayout or other ViewGroup in your activity_quiz.xml to add these views
-            LinearLayout quizContainer = findViewById(R.id.quizContainer);
-            quizContainer.addView(questionView);
-        }
+        // }
     }
+
+    private void loadQuestionView(String[] questionsToAsk, String[][] categoryOptions, String[] correctAnswers, String category) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View questionView = inflater.inflate(R.layout.question_layout, null);
+
+        // Find and set the image for the question (if applicable)
+        ImageView questionImage = questionView.findViewById(R.id.imageView);
+        switch (category) {
+            case "About Canada":
+                // Set the image resource based on the question number
+                @SuppressLint("DiscouragedApi") int imageResId = getResources().getIdentifier(
+                        "about_canada" + (currentQuestionIdx + 1),
+                        "drawable", getPackageName()
+                );
+                questionImage.setImageResource(imageResId);
+                break;
+            case "Canadian Capital":
+                @SuppressLint("DiscouragedApi") int imageResId2 = getResources().getIdentifier(
+                        "capital" + (currentQuestionIdx + 1),
+                        "drawable",
+                        getPackageName());
+                questionImage.setImageResource(imageResId2);
+                break;
+            case "Canadian Mountains":
+                @SuppressLint("DiscouragedApi") int imageResId3 = getResources().getIdentifier(
+                        "mountain" + (currentQuestionIdx + 1),
+                        "drawable",
+                        getPackageName());
+                questionImage.setImageResource(imageResId3);
+                break;
+        }
+
+        TextView questionText = questionView.findViewById(R.id.textView);
+        questionText.setText(questionsToAsk[currentQuestionIdx]);
+
+        // Find the RadioGroup and populate the options
+        RadioGroup optionsGroup = questionView.findViewById(R.id.radioGroupOptions);
+
+        for (String option : categoryOptions[currentQuestionIdx]) {
+            RadioButton radioButton = new RadioButton(this);
+            radioButton.setText(option);
+            optionsGroup.addView(radioButton);
+        }
+
+        // Find and set up the Next button
+        Button nextButton = questionView.findViewById(R.id.next_button);
+        nextButton.setOnClickListener(v -> {
+            // Increment the current question index and load the next question
+            currentQuestionIdx++;
+            // Clear the current views and load the next question
+            LinearLayout quizContainer = findViewById(R.id.quizContainer);
+            quizContainer.removeAllViews();
+            loadQuestions(category);
+        });
+        // Add the question view to your layout
+        ConstraintLayout quizContainer = findViewById(R.id.quizContainer);
+        quizContainer.addView(questionView);
+    }
+
 }
 
 class Question {

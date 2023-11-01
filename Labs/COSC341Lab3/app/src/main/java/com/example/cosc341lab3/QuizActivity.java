@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ public class QuizActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quiz);
 
         numQuestions = Integer.parseInt(getIntent().getStringExtra("numberOfQuestions"));
+        System.out.println(numQuestions);
         String category = getIntent().getStringExtra("category");
 
         loadQuestions(category);
@@ -105,7 +107,7 @@ public class QuizActivity extends AppCompatActivity {
         // all we have to do is replace the template image and text view with the right content
         // and then append radio buttons to the empty radio group
 
-        if (currentQuestionIdx <= numQuestions) {
+        if (currentQuestionIdx < numQuestions) {
             loadQuestionView(questionsToAsk, categoryOptions, correctAnswers, category);
         } else { // Now we need to show the results
 
@@ -122,6 +124,15 @@ public class QuizActivity extends AppCompatActivity {
                     numCorrect,
                     numQuestions
             ));
+
+            Button doneButton = findViewById(R.id.done_button);
+            doneButton.setOnClickListener(v -> {
+                // Common design pattern: use intents to navigate pages
+                Intent intent = new Intent(QuizActivity.this, MainActivity.class);
+                startActivity(intent); // Bringing the user back to the homepage
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Clearing previous activities
+                finish(); // Finishing QuizActivity to remove it from the activity stack
+            });
         }
     }
 
@@ -181,7 +192,6 @@ public class QuizActivity extends AppCompatActivity {
             if (selectedRadioButton != null && selectedRadioButton.getText().equals(correctAnswer)) {
                 numCorrect++;
             }
-
             quizContainer.removeAllViews();
             loadQuestions(category);
         });

@@ -33,6 +33,7 @@
         android:id="@+id/done_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/gray"
         android:layout_marginBottom="448dp"
         android:text="@string/done"
         app:layout_constraintBottom_toBottomOf="parent"

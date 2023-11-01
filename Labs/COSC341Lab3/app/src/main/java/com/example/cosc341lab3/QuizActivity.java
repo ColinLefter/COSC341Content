@@ -15,16 +15,18 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
 public class QuizActivity extends AppCompatActivity {
     private int currentQuestionIdx = 0;
-    private int numOfQuestions;
+    private int numQuestions;
+    private int numCorrect = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
-        numOfQuestions = Integer.parseInt(getIntent().getStringExtra("numberOfQuestions"));
+        numQuestions = Integer.parseInt(getIntent().getStringExtra("numberOfQuestions"));
         String category = getIntent().getStringExtra("category");
 
         loadQuestions(category);
@@ -40,7 +42,7 @@ public class QuizActivity extends AppCompatActivity {
         } else if (category.equals(categories[2])) {  // Canadian Mountains
             questions = getResources().getStringArray(R.array.canadian_mountains_questions);
         } else {
-            questions = new String[0];  // Default case, no questions
+            questions = new String[0];  // No questions (just a fallback)
         }
         return questions;
     }
@@ -71,7 +73,7 @@ public class QuizActivity extends AppCompatActivity {
                 getResources().getStringArray(R.array.canadian_mountains_options_q4)
             };
         } else {
-            options = new String[0][0];  // Default case, no options
+            options = new String[0][0];  // No options (just a fallback)
         }
         return options;
     }
@@ -87,7 +89,7 @@ public class QuizActivity extends AppCompatActivity {
         } else if (category.equals(categories[2])) {  // Canadian Mountains
             correctAnswers = getResources().getStringArray(R.array.canadian_mountains_correct_answers);
         } else {
-            correctAnswers = new String[0];  // Default case, no correct answers
+            correctAnswers = new String[0];  // No correct answers (just a fallback)
         }
         return correctAnswers;
     }
@@ -100,19 +102,35 @@ public class QuizActivity extends AppCompatActivity {
         // this task requires us to dynamically set the layout display using the data above
         // the solution to this is to use a layout inflater to create views for each question
         // where the base template is the question_layout.xml template
+        // all we have to do is replace the template image and text view with the right content
+        // and then append radio buttons to the empty radio group
 
-        if (currentQuestionIdx <= numOfQuestions) {
+        if (currentQuestionIdx <= numQuestions) {
             loadQuestionView(questionsToAsk, categoryOptions, correctAnswers, category);
-        } //else { // Now we need to show the results
+        } else { // Now we need to show the results
 
-        // }
+            // Now we need to display the results page by inflating it to the main quiz container
+            LayoutInflater inflater = LayoutInflater.from(this);
+            ConstraintLayout quizContainer = findViewById(R.id.quizContainer);
+            View resultsView = inflater.inflate(R.layout.results_page_layout, quizContainer, false);
+            setContentView(resultsView);
+
+            TextView resultsPlaceholder = findViewById(R.id.results_placeholder);
+            resultsPlaceholder.setText(String.format(
+                    Locale.getDefault(), // Just to suppress the error
+                    "%d/%d",
+                    numCorrect,
+                    numQuestions
+            ));
+        }
     }
 
     private void loadQuestionView(String[] questionsToAsk, String[][] categoryOptions, String[] correctAnswers, String category) {
         LayoutInflater inflater = LayoutInflater.from(this);
-        View questionView = inflater.inflate(R.layout.question_layout, null);
+        ConstraintLayout quizContainer = findViewById(R.id.quizContainer);
+        View questionView = inflater.inflate(R.layout.question_layout, quizContainer, false);
 
-        // Find and set the image for the question (if applicable)
+        // Locate the image and dynamically update the image depending on the current question
         ImageView questionImage = questionView.findViewById(R.id.imageView);
         switch (category) {
             case "About Canada":
@@ -142,7 +160,7 @@ public class QuizActivity extends AppCompatActivity {
         TextView questionText = questionView.findViewById(R.id.textView);
         questionText.setText(questionsToAsk[currentQuestionIdx]);
 
-        // Find the RadioGroup and populate the options
+        // Locate the RadioGroup and iterate through the list of options, appending individual radio buttons
         RadioGroup optionsGroup = questionView.findViewById(R.id.radioGroupOptions);
 
         for (String option : categoryOptions[currentQuestionIdx]) {
@@ -151,32 +169,23 @@ public class QuizActivity extends AppCompatActivity {
             optionsGroup.addView(radioButton);
         }
 
-        // Find and set up the Next button
+        // Locating the next button
         Button nextButton = questionView.findViewById(R.id.next_button);
         nextButton.setOnClickListener(v -> {
-            // Increment the current question index and load the next question
-            currentQuestionIdx++;
-            // Clear the current views and load the next question
-            LinearLayout quizContainer = findViewById(R.id.quizContainer);
+            // Incrementing the question index counter and loading the next view
+            // We need to process the user input right at this point before we clear the view
+            // We do so by obtaining the selected option from the radio group
+            String correctAnswer = correctAnswers[currentQuestionIdx++]; // Post-increment
+            int selectedId = optionsGroup.getCheckedRadioButtonId();
+            RadioButton selectedRadioButton = questionView.findViewById(selectedId);
+            if (selectedRadioButton != null && selectedRadioButton.getText().equals(correctAnswer)) {
+                numCorrect++;
+            }
+
             quizContainer.removeAllViews();
             loadQuestions(category);
         });
-        // Add the question view to your layout
-        ConstraintLayout quizContainer = findViewById(R.id.quizContainer);
+        // Adding the question view to the main quiz view
         quizContainer.addView(questionView);
     }
-}
-
-class Question {
-    private int imageResourceId;
-    private List<String> options;
-
-    public Question(int imageResourceId, List<String> options) {
-        this.imageResourceId = imageResourceId;
-        this.options = options;
-    }
-
-    // Getters
-    public int getImageResourceId() { return imageResourceId; }
-    public List<String> getOptions() { return options; }
 }

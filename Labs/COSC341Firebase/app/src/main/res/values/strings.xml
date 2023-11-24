@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">COSC341 Firebase</string>
+    <string name="name">Name</string>
+    <string name="student_id">Student ID</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="student_number">Student Number</string>
+    <string name="last_name">Last Name</string>
+    <string name="gender">Gender</string>
+    <string name="division">Division</string>
+    <string name="first_name">First Name</string>
+    <string name="submit">SUBMIT</string>
+    <string-array name="subjects_array">
+        <item>COSC</item>
+        <item>DATA</item>
+        <item>MATH</item>
+        <item>ECON</item>
+        <item>ENGL</item>
+    </string-array>
 </resources>

@@ -105,9 +105,9 @@
         android:layout_height="50dp"
         android:text="PREVIOUS"
         app:layout_constraintBottom_toTopOf="@+id/mainScreenButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.09"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@id/nextButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
 
     <Button
         android:id="@+id/nextButton"
@@ -115,9 +115,9 @@
         android:layout_height="50dp"
         android:text="NEXT"
         app:layout_constraintBottom_toTopOf="@+id/mainScreenButton"
+        app:layout_constraintStart_toEndOf="@id/previousButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.913"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.5" />
 
     <Button
         android:id="@+id/mainScreenButton"
@@ -128,4 +128,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

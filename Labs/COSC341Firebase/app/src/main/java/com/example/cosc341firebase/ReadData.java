@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -17,13 +19,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class ReadData extends AppCompatActivity {
     private DatabaseReference root;
-    private int lineToRead = 0;
+    private int userDataIdx = 0; // we start from the first captured data
+    private int numData = 0;
+    private ArrayList<String[]> userData = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,91 +44,99 @@ public class ReadData extends AppCompatActivity {
         Button mainScreenButton = findViewById(R.id.mainScreenButton);
 
         nextButton.setOnClickListener(v -> {
-            lineToRead++;
+            userDataIdx = (userDataIdx + 1) % numData;
+            getData(readFromDatabase);
         });
 
         previousButton.setOnClickListener(v -> {
-            lineToRead--;
+            userDataIdx = (userDataIdx - 1) % numData;
+            if (userDataIdx < 0) {
+                userDataIdx = numData-1;
+            }
+            getData(readFromDatabase);
         });
 
         mainScreenButton.setOnClickListener(v -> {
             finish();
         });
+
+        getData(readFromDatabase); // if it is the first time
     }
-    public void getDate(boolean readFromDatabase) {
-        if (lineToRead < 0) {
 
+    public void updateUI() {
+        if (!userData.isEmpty() && userDataIdx < userData.size()) {
+            String[] globalData = userData.get(userDataIdx);
+
+            String studentNumber = globalData[0];
+            String lastName = globalData[1];
+            String firstName = globalData[2];
+            String gender = globalData[3];
+            String division = globalData[4];
+            String fullName = firstName + " " + lastName;
+
+            TextView studentNumberView = findViewById(R.id.SIDOut);
+            TextView nameView = findViewById(R.id.nameOut);
+            TextView genderView = findViewById(R.id.genderOut);
+            TextView divisionView = findViewById(R.id.divisionOut);
+
+            studentNumberView.setText(studentNumber);
+            nameView.setText(fullName);
+            genderView.setText(gender);
+            divisionView.setText(division);
         }
-
-        if (readFromDatabase) {
-            root.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    // this is where we read the data from the user
-                    if (snapshot.hasChildren()) {
-                        DataSnapshot current = snapshot.getChildren().iterator().next();
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    System.out.println(error.getDetails());
-                }
-            });
+    }
+    public void getData(boolean readFromDatabase) {
+        if (readFromDatabase) { // controls where the data is being read from
+            readFromFirebase();
         } else {
-            String line = readLineFromFile(lineToRead, this);
-            displayData(line);
+            readDataFromFile();
         }
+        updateUI(); // to ensure that asynchronous calls are completed in time
     }
 
-    private void displayData(String dataLine) {
-        if (dataLine != null && !dataLine.isEmpty()) {
-            String[] dataParts = dataLine.split(",");
-            if (dataParts.length >= 5) {
-                String studentNumber = dataParts[0];
-                String lastName = dataParts[1];
-                String firstName = dataParts[2];
-                String gender = dataParts[3];
-                String division = dataParts[4];
-                String fullName = firstName + " " + lastName;
+    public void readFromFirebase() {
+        root.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userData.clear(); // just in case
+                for (DataSnapshot node : dataSnapshot.getChildren()) {
+                    String studentNumber = node.getKey();
+                    String lastName = node.child("LastName").getValue(String.class);
+                    String firstName = node.child("FirstName").getValue(String.class);
+                    String gender = node.child("Gender").getValue(String.class);
+                    String division = node.child("Division").getValue(String.class);
 
-                TextView studentNumberView = findViewById(R.id.SIDOut);
-                TextView nameView = findViewById(R.id.nameOut);
-                TextView genderView = findViewById(R.id.genderOut);
-                TextView divisionView = findViewById(R.id.divisionOut);
-
-                studentNumberView.setText(studentNumber);
-                nameView.setText(fullName);
-                genderView.setText(gender);
-                divisionView.setText(division);
-            }
-        } else {
-            Toast.makeText(
-                    this,
-                    "No data yet. Please write some data first.",
-                    Toast.LENGTH_SHORT
-            ).show();
-        }
-    }
-
-    private String readLineFromFile(int lineNumber, Context context) {
-        try {
-            InputStream inputStream = context.openFileInput("data.txt");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            int currentLine = 0;
-            while ((line = reader.readLine()) != null) {
-                if (currentLine == lineNumber) {
-                    reader.close();
-                    return line;
+                    String[] dataPoints = {studentNumber, lastName, firstName, gender, division};
+                    userData.add(dataPoints);
                 }
-                currentLine++;
+                numData = userData.size(); // update now that we have all the data
+                updateUI(); // to deal with the asynchronous calls
             }
-            reader.close();
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("firebase", "Error fetching data", databaseError.toException());
+            }
+        });
+    }
+
+    private void readDataFromFile() {
+        String filename = "data.txt";
+        String line;
+
+        try (
+            FileInputStream fis = openFileInput(filename);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr)
+        ) {
+            while ((line = br.readLine()) != null) {
+                String[] dataPoints = line.split(",");
+                userData.add(dataPoints);
+            }
+            numData = userData.size();
         } catch (IOException e) {
-            Log.e("ReadData", "Error reading file", e);
+            e.printStackTrace();
         }
-        return null;
     }
+
 
 }

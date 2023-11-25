@@ -17,9 +17,12 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
@@ -70,7 +73,7 @@ public class WriteData extends AppCompatActivity {
                 if (writeOnDatabase) {
                     writeToDB(studentNumber, lastName, firstName, gender, division);
                 } else {
-                    writeToDataFile(data, this);
+                    writeToDataFile(data);
                 }
                 finish();
             }
@@ -78,32 +81,21 @@ public class WriteData extends AppCompatActivity {
     }
 
     public void writeToDB(String studentNumber, String lastName, String firstName, String gender, String division) {
-        HashMap<String, Object> userData = new HashMap<>();
-        userData.put("studentNumber", studentNumber);
-        userData.put("lastName", lastName);
-        userData.put("firstName", firstName);
-        userData.put("gender", gender);
-        userData.put("division", division);
-
-        root.push().setValue(userData);
+        // we are using the student ID as the root
+        DatabaseReference currentStudent = root.child(studentNumber);
+        currentStudent.child("LastName").setValue(lastName);
+        currentStudent.child("FirstName").setValue(firstName);
+        currentStudent.child("Gender").setValue(gender);
+        currentStudent.child("Division").setValue(division);
     }
 
-    private void writeToDataFile(String data, Context context) {
+    private void writeToDataFile(String data) {
         String filename = "data.txt";
-        File file = new File(context.getFilesDir(), filename);
 
-        try {
-            // check if the file exists
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            try (FileOutputStream fos = new FileOutputStream(file, true)) {
-                OutputStreamWriter out = new OutputStreamWriter(fos);
-                out.write(data);
-            }
-        } catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e);
+        try (FileOutputStream outputStream = openFileOutput(filename, Context.MODE_APPEND)) {
+            outputStream.write(data.getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
